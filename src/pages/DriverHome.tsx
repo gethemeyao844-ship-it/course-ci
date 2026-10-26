@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import {
-  Bike, Power, MapPin, Navigation, Check, X,
+  Bike, Power, MapPin, Navigation, Check, X, Phone,
   Package, ShoppingBag, UtensilsCrossed, ChevronRight, Star,
 } from 'lucide-react';
 import { useApp } from '@/context';
 import { driverOrders, statusLabels, orderTypeLabels, formatFCFA } from '@/data';
+import { DriverMap } from '@/components/DriverMap';
+import type { GeoCoords } from '@/hooks/useGeolocation';
 import type { Order } from '@/types';
 
 export function DriverHome() {
@@ -45,6 +47,11 @@ export function DriverHome() {
   // Assigned order detail view
   if (assignedOrder) {
     const status = statusLabels[assignedOrder.status];
+    const deliveryCoords: GeoCoords | null =
+      typeof assignedOrder.deliveryLat === 'number' && typeof assignedOrder.deliveryLng === 'number'
+        ? { lat: assignedOrder.deliveryLat, lng: assignedOrder.deliveryLng }
+        : null;
+
     return (
       <div className="max-w-2xl mx-auto px-4 py-6 animate-slide-up">
         <div className="card p-5 mb-4 bg-gradient-to-br from-navy-900 to-navy-700 text-white">
@@ -59,8 +66,9 @@ export function DriverHome() {
           <p className="text-xs text-navy-200 mt-0.5">Vos gains pour cette mission</p>
         </div>
 
-        <div className="card p-5 mb-4 space-y-4">
-          {assignedOrder.pickupAddress && (
+        {/* Pickup address */}
+        {assignedOrder.pickupAddress && (
+          <div className="card p-5 mb-4">
             <div className="flex gap-3">
               <div className="w-10 h-10 rounded-xl bg-navy-50 flex items-center justify-center shrink-0">
                 <Package size={20} className="text-navy-600" />
@@ -73,22 +81,19 @@ export function DriverHome() {
                 </button>
               </div>
             </div>
-          )}
-          <div className="flex gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-              <MapPin size={20} className="text-orange-600" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase">Livraison</h3>
-              <p className="text-sm font-semibold text-navy-900">{assignedOrder.deliveryAddress}</p>
-              <p className="text-xs text-gray-400">{assignedOrder.commune}</p>
-              <button onClick={() => openMaps(assignedOrder.deliveryAddress)} className="text-xs text-orange-600 font-semibold mt-1 flex items-center gap-1">
-                <Navigation size={12} /> Ouvrir l'itinéraire
-              </button>
-            </div>
           </div>
+        )}
+
+        {/* Interactive driver map with navigation */}
+        <div className="mb-4">
+          <DriverMap
+            deliveryAddress={assignedOrder.deliveryAddress}
+            deliveryCoords={deliveryCoords}
+            commune={assignedOrder.commune}
+          />
         </div>
 
+        {/* Mission details */}
         <div className="card p-5 mb-4">
           <h3 className="font-bold text-navy-900 mb-3">Détails de la mission</h3>
           <div className="space-y-2 text-sm">

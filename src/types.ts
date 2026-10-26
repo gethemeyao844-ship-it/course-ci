@@ -73,6 +73,8 @@ export interface Order {
   driverName?: string;
   instructions?: string;
   timeSlot?: string;
+  deliveryLat?: number;
+  deliveryLng?: number;
 }
 
 export interface Partner {

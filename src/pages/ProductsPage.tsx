@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { ArrowLeft, Search, SlidersHorizontal, Plus, Minus, ShoppingCart, Check, X, Star, MapPin } from 'lucide-react';
 import { useApp } from '@/context';
 import { demoProducts, productCategories, formatFCFA, COMMUNES } from '@/data';
+import { LocationPicker } from '@/components/LocationPicker';
+import type { GeoCoords } from '@/hooks/useGeolocation';
 import type { Product, CartItem, Order } from '@/types';
 
 export function ProductsPage() {
@@ -12,6 +14,8 @@ export function ProductsPage() {
   const [sort, setSort] = useState('default');
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [checkoutCoords, setCheckoutCoords] = useState<GeoCoords | null>(null);
+  const [checkoutAddress, setCheckoutAddress] = useState('');
 
   const filtered = useMemo(() => {
     let list = demoProducts;
@@ -55,14 +59,18 @@ export function ProductsPage() {
       serviceFee,
       deliveryFee,
       total,
-      deliveryAddress: user?.commune ? `${user.commune}, à confirmer` : 'À confirmer',
+      deliveryAddress: checkoutAddress || (user?.commune ? `${user.commune}, à confirmer` : 'À confirmer'),
       phone: user?.phone || '',
       commune: user?.commune || 'Cocody',
       customerName: user?.name || 'Client',
       customerPhone: user?.phone || '',
+      deliveryLat: checkoutCoords?.lat,
+      deliveryLng: checkoutCoords?.lng,
     };
     placeOrder(order);
     setCheckoutOpen(false);
+    setCheckoutCoords(null);
+    setCheckoutAddress('');
     setSuccess(true);
   };
 
@@ -256,6 +264,10 @@ export function ProductsPage() {
           deliveryFee={deliveryFee}
           total={total}
           onConfirm={confirmOrder}
+          coords={checkoutCoords}
+          onCoordsChange={setCheckoutCoords}
+          address={checkoutAddress}
+          onAddressChange={setCheckoutAddress}
         />
       )}
     </div>
@@ -264,6 +276,7 @@ export function ProductsPage() {
 
 function CheckoutModal({
   onClose, cart, subtotal, serviceFee, deliveryFee, total, onConfirm,
+  coords, onCoordsChange, address, onAddressChange,
 }: {
   onClose: () => void;
   cart: CartItem[];
@@ -272,8 +285,11 @@ function CheckoutModal({
   deliveryFee: number;
   total: number;
   onConfirm: () => void;
+  coords: GeoCoords | null;
+  onCoordsChange: (c: GeoCoords | null) => void;
+  address: string;
+  onAddressChange: (a: string) => void;
 }) {
-  const [address, setAddress] = useState('');
   const [commune, setCommune] = useState('Cocody');
   const [phone, setPhone] = useState('');
   const [payment, setPayment] = useState('cash');
@@ -291,10 +307,13 @@ function CheckoutModal({
         <div className="p-5 space-y-4">
           {step === 'address' ? (
             <>
-              <div>
-                <label className="label-text">Adresse de livraison</label>
-                <textarea className="input-field min-h-[70px] resize-none" placeholder="Ex: Cocody Riviera 2, près de la pharmacie" value={address} onChange={(e) => setAddress(e.target.value)} />
-              </div>
+              <LocationPicker
+                address={address}
+                onAddressChange={onAddressChange}
+                coords={coords}
+                onCoordsChange={onCoordsChange}
+                commune={commune}
+              />
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-text">Commune</label>

@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { ArrowLeft, Package, Check, MapPin, Phone, User, Camera, Weight, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Check, MapPin, Phone, User, Camera, Weight, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context';
 import { COMMUNES, formatFCFA } from '@/data';
+import { LocationPicker } from '@/components/LocationPicker';
+import type { GeoCoords } from '@/hooks/useGeolocation';
 import type { Order } from '@/types';
 
 export function ParcelPage() {
@@ -20,6 +22,7 @@ export function ParcelPage() {
     weight: '',
     instructions: '',
   });
+  const [coords, setCoords] = useState<GeoCoords | null>(null);
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
 
@@ -48,6 +51,8 @@ export function ParcelPage() {
       customerName: form.senderName,
       customerPhone: form.senderPhone,
       instructions: form.instructions,
+      deliveryLat: coords?.lat,
+      deliveryLng: coords?.lng,
     };
     placeOrder(order);
     setStep('success');
@@ -167,9 +172,14 @@ export function ParcelPage() {
               <label className="label-text">Téléphone</label>
               <input className="input-field" placeholder="+225 07 ..." value={form.recipientPhone} onChange={(e) => update('recipientPhone', e.target.value)} />
             </div>
-            <div>
-              <label className="label-text">Adresse d'arrivée</label>
-              <input className="input-field" placeholder="Ex: Plateau, Avenue Chardy" value={form.deliveryAddress} onChange={(e) => update('deliveryAddress', e.target.value)} />
+            <div className="sm:col-span-2">
+              <LocationPicker
+                address={form.deliveryAddress}
+                onAddressChange={(v) => update('deliveryAddress', v)}
+                coords={coords}
+                onCoordsChange={setCoords}
+                commune={form.deliveryCommune}
+              />
             </div>
             <div>
               <label className="label-text">Commune d'arrivée</label>

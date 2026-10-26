@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { ArrowLeft, Plus, Trash2, ShoppingCart, Check, Camera, MapPin, Clock, Phone } from 'lucide-react';
 import { useApp } from '@/context';
 import { COMMUNES, formatFCFA } from '@/data';
+import { LocationPicker } from '@/components/LocationPicker';
+import type { GeoCoords } from '@/hooks/useGeolocation';
 import type { ErrandItem, Order } from '@/types';
 
 export function ErrandPage() {
@@ -13,11 +15,12 @@ export function ErrandPage() {
     market: "Marché d'Adjamé",
     instructions: '',
     pickupAddress: '',
-    deliveryAddress: user?.commune ? `Cocody, ${user.commune}` : '',
+    deliveryAddress: '',
     phone: user?.phone || '',
     timeSlot: "Aujourd'hui, 14h-16h",
     commune: user?.commune || 'Cocody',
   });
+  const [coords, setCoords] = useState<GeoCoords | null>(null);
 
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
 
@@ -60,6 +63,8 @@ export function ErrandPage() {
       customerPhone: form.phone,
       instructions: form.instructions,
       timeSlot: form.timeSlot,
+      deliveryLat: coords?.lat,
+      deliveryLng: coords?.lng,
     };
     placeOrder(order);
     setStep('success');
@@ -259,12 +264,12 @@ export function ErrandPage() {
             />
           </div>
           <div>
-            <label className="label-text">Adresse de livraison</label>
-            <textarea
-              className="input-field min-h-[60px] resize-none"
-              placeholder="Ex: Cocody Riviera 2, près de la pharmacie..."
-              value={form.deliveryAddress}
-              onChange={(e) => update('deliveryAddress', e.target.value)}
+            <LocationPicker
+              address={form.deliveryAddress}
+              onAddressChange={(v) => update('deliveryAddress', v)}
+              coords={coords}
+              onCoordsChange={setCoords}
+              commune={form.commune}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
