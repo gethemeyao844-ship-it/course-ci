@@ -75,6 +75,7 @@ export interface Order {
   timeSlot?: string;
   deliveryLat?: number;
   deliveryLng?: number;
+  deliveredAt?: string;
 }
 
 export interface Partner {

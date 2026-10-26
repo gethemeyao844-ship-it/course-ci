@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigation, MapPin, Crosshair, Loader2, AlertCircle, ExternalLink, RefreshCw } from 'lucide-react';
+import { Navigation, MapPin, Crosshair, Loader2, AlertCircle, ExternalLink, RefreshCw, User } from 'lucide-react';
 import { useGeolocation, type GeoCoords } from '@/hooks/useGeolocation';
 
 interface DriverMapProps {
@@ -8,45 +8,64 @@ interface DriverMapProps {
   commune?: string;
 }
 
+function isValidCoords(c: GeoCoords | null): c is GeoCoords {
+  if (!c) return false;
+  return (
+    typeof c.lat === 'number' &&
+    typeof c.lng === 'number' &&
+    !Number.isNaN(c.lat) &&
+    !Number.isNaN(c.lng) &&
+    c.lat >= -90 && c.lat <= 90 &&
+    c.lng >= -180 && c.lng <= 180
+  );
+}
+
+function buildFullAddress(address: string, commune?: string): string {
+  const parts = [address.trim(), commune?.trim()].filter(Boolean);
+  const full = parts.join(', ');
+  return full.length > 10 ? full : '';
+}
+
 export function DriverMap({ deliveryAddress, deliveryCoords, commune }: DriverMapProps) {
   const geo = useGeolocation();
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const hasDeliveryCoords =
-    deliveryCoords &&
-    typeof deliveryCoords.lat === 'number' &&
-    typeof deliveryCoords.lng === 'number' &&
-    deliveryCoords.lat >= -90 && deliveryCoords.lat <= 90 &&
-    deliveryCoords.lng >= -180 && deliveryCoords.lng <= 180;
-
+  const hasDeliveryCoords = isValidCoords(deliveryCoords);
   const driverCoords = geo.coords;
+  const hasDriverCoords = isValidCoords(driverCoords);
+
+  const fullAddress = buildFullAddress(deliveryAddress, commune);
+  const hasSufficientAddress = fullAddress.length > 0;
 
   const handleLocate = async () => {
     await geo.request();
     setRefreshKey((k) => k + 1);
   };
 
-  // Build OSM embed: show both points with a bounding box
+  // Build OSM embed: show delivery point, or both points with bounding box
   let mapSrc: string | null = null;
-  if (hasDeliveryCoords && driverCoords) {
-    const minLat = Math.min(deliveryCoords!.lat, driverCoords.lat) - 0.002;
-    const maxLat = Math.max(deliveryCoords!.lat, driverCoords.lat) + 0.002;
-    const minLng = Math.min(deliveryCoords!.lng, driverCoords.lng) - 0.002;
-    const maxLng = Math.max(deliveryCoords!.lng, driverCoords.lng) + 0.002;
-    mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng},${minLat},${maxLng},${maxLat}&layer=mapnik&marker=${deliveryCoords!.lat},${deliveryCoords!.lng}`;
+  if (hasDeliveryCoords && hasDriverCoords) {
+    const minLat = Math.min(deliveryCoords.lat, driverCoords.lat) - 0.002;
+    const maxLat = Math.max(deliveryCoords.lat, driverCoords.lat) + 0.002;
+    const minLng = Math.min(deliveryCoords.lng, driverCoords.lng) - 0.002;
+    const maxLng = Math.max(deliveryCoords.lng, driverCoords.lng) + 0.002;
+    mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng},${minLat},${maxLng},${maxLat}&layer=mapnik&marker=${deliveryCoords.lat},${deliveryCoords.lng}`;
   } else if (hasDeliveryCoords) {
-    mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${deliveryCoords!.lng - 0.005},${deliveryCoords!.lat - 0.003},${deliveryCoords!.lng + 0.005},${deliveryCoords!.lat + 0.003}&layer=mapnik&marker=${deliveryCoords!.lat},${deliveryCoords!.lng}`;
+    mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${deliveryCoords.lng - 0.005},${deliveryCoords.lat - 0.003},${deliveryCoords.lng + 0.005},${deliveryCoords.lat + 0.003}&layer=mapnik&marker=${deliveryCoords.lat},${deliveryCoords.lng}`;
   }
 
-  // Navigation links
-  const navLink =
-    hasDeliveryCoords && driverCoords
-      ? `https://www.google.com/maps/dir/?api=1&origin=${driverCoords.lat},${driverCoords.lng}&destination=${deliveryCoords!.lat},${deliveryCoords!.lng}&travelmode=driving`
-      : hasDeliveryCoords
-      ? `https://www.google.com/maps/dir/?api=1&destination=${deliveryCoords!.lat},${deliveryCoords!.lng}&travelmode=driving`
-      : deliveryAddress
-      ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(deliveryAddress + (commune ? ', ' + commune : ''))}&travelmode=driving`
-      : null;
+  // Build Google Maps navigation link - prioritize GPS coords, then address
+  let navLink: string | null = null;
+  if (hasDeliveryCoords) {
+    const dest = `${deliveryCoords.lat},${deliveryCoords.lng}`;
+    navLink = hasDriverCoords
+      ? `https://www.google.com/maps/dir/?api=1&origin=${driverCoords.lat},${driverCoords.lng}&destination=${dest}&travelmode=driving`
+      : `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`;
+  } else if (hasSufficientAddress) {
+    navLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}&travelmode=driving`;
+  }
+
+  const canNavigate = hasDeliveryCoords || hasSufficientAddress;
 
   return (
     <div className="card p-5 space-y-4">
@@ -54,43 +73,44 @@ export function DriverMap({ deliveryAddress, deliveryCoords, commune }: DriverMa
         <Navigation size={18} className="text-orange-500" /> Navigation vers le client
       </h3>
 
-      {/* No coords at all */}
-      {!hasDeliveryCoords && !deliveryAddress.trim() && (
+      {/* No address and no coords at all */}
+      {!hasDeliveryCoords && !hasSufficientAddress && (
         <div className="flex items-start gap-2 text-sm text-error-600 bg-error-50 rounded-lg px-3 py-3">
           <AlertCircle size={18} className="shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold">Position du client indisponible</p>
-            <p className="text-xs mt-1">Le client n'a pas fourni de coordonnées GPS ni d'adresse. Contactez-le par téléphone pour obtenir l'adresse exacte.</p>
+            <p className="text-xs mt-1">
+              Le client n'a fourni ni coordonnées GPS ni adresse suffisante. Contactez-le par téléphone pour obtenir l'adresse exacte avant de démarrer la navigation.
+            </p>
           </div>
         </div>
       )}
 
-      {/* Has address but no coords */}
-      {!hasDeliveryCoords && deliveryAddress.trim() && (
+      {/* Has partial address but no GPS coords */}
+      {!hasDeliveryCoords && hasSufficientAddress && (
         <div className="flex items-start gap-2 text-sm text-orange-700 bg-orange-50 rounded-lg px-3 py-3">
           <AlertCircle size={18} className="shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold">Coordonnées GPS non disponibles</p>
             <p className="text-xs mt-1">
-              Le client n'a pas activé le GPS. Adresse fournie : <strong>{deliveryAddress}{commune ? `, ${commune}` : ''}</strong>.
-              Utilisez la navigation par adresse ci-dessous.
+              Le client n'a pas activé le GPS. Navigation par adresse : <strong>{fullAddress}</strong>.
+              La destination exacte peut varier — vérifiez avec le client si besoin.
             </p>
           </div>
         </div>
       )}
 
       {/* Delivery address */}
-      {deliveryAddress.trim() && (
+      {hasSufficientAddress && (
         <div className="flex gap-3 items-start">
           <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
             <MapPin size={20} className="text-orange-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-xs font-semibold text-gray-400 uppercase">Adresse de livraison</h4>
-            <p className="text-sm font-semibold text-navy-900">{deliveryAddress}</p>
-            {commune && <p className="text-xs text-gray-400">{commune}</p>}
+            <h4 className="text-xs font-semibold text-gray-400 uppercase">Adresse de livraison (client)</h4>
+            <p className="text-sm font-semibold text-navy-900">{fullAddress}</p>
             {hasDeliveryCoords && (
-              <p className="text-xs text-success-600 mt-0.5">GPS: {deliveryCoords!.lat.toFixed(5)}, {deliveryCoords!.lng.toFixed(5)}</p>
+              <p className="text-xs text-success-600 mt-0.5">GPS: {deliveryCoords.lat.toFixed(5)}, {deliveryCoords.lng.toFixed(5)}</p>
             )}
           </div>
         </div>
@@ -106,16 +126,16 @@ export function DriverMap({ deliveryAddress, deliveryCoords, commune }: DriverMa
         >
           {geo.status === 'loading' ? (
             <><Loader2 size={18} className="animate-spin" /> Localisation de votre position...</>
-          ) : driverCoords ? (
+          ) : hasDriverCoords ? (
             <><RefreshCw size={18} /> Mettre à jour ma position</>
           ) : (
             <><Crosshair size={18} /> Activer ma position pour l'itinéraire</>
           )}
         </button>
 
-        {driverCoords && (
-          <p className="text-xs text-success-600 mt-1.5 text-center">
-            Votre position : {driverCoords.lat.toFixed(5)}, {driverCoords.lng.toFixed(5)}
+        {hasDriverCoords && (
+          <p className="text-xs text-success-600 mt-1.5 text-center flex items-center justify-center gap-1">
+            <User size={12} /> Votre position : {driverCoords.lat.toFixed(5)}, {driverCoords.lng.toFixed(5)}
           </p>
         )}
 
@@ -132,7 +152,7 @@ export function DriverMap({ deliveryAddress, deliveryCoords, commune }: DriverMa
         <div className="rounded-xl overflow-hidden border border-gray-200">
           <iframe
             key={refreshKey}
-            title="Itinéraire de livraison"
+            title="Carte de livraison"
             src={mapSrc}
             className="w-full h-56 border-0"
             loading="lazy"
@@ -141,7 +161,7 @@ export function DriverMap({ deliveryAddress, deliveryCoords, commune }: DriverMa
       )}
 
       {/* Navigate button */}
-      {navLink && (
+      {canNavigate && navLink && (
         <a
           href={navLink}
           target="_blank"
