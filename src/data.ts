@@ -1,9 +1,16 @@
-import type { Product, Partner, Promotion, Order, Notification, User } from '@/types';
+import type { Product, Partner, Promotion, Order, Notification, User, SupplyList, ProductCategory } from '@/types';
 
 export const COMMUNES = [
   'Abobo', 'Adjamé', 'Attécoubé', 'Cocody', 'Koumassi',
   'Marcory', 'Plateau', 'Treichville', 'Yopougon', 'Port-Bouët',
   'Bingerville', 'Songon',
+];
+
+export const PRODUCT_UNITS = [
+  'pièce', 'kg', 'g', 'litre', 'sac', 'carton',
+  'caisse', 'paquet', 'lot', 'bouteille', 'pack',
+  'plat', 'plateau', 'régime', 'panier', 'pair',
+  'boîte', 'set', 'unité',
 ];
 
 export const demoUser: User = {
@@ -16,29 +23,109 @@ export const demoUser: User = {
   avatarUrl: 'https://images.pexels.com/photos/5384445/pexels-photo-5384445.jpeg?auto=compress&cs=tinysrgb&h=120&w=120',
 };
 
-export const demoProducts: Product[] = [
-  { id: 'p1', name: 'Ananas frais', description: 'Ananas mûr du marché local', price: 500, category: 'Fruits & Légumes', imageUrl: 'https://images.pexels.com/photos/37126231/pexels-photo-37126231.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', unit: 'pièce' },
-  { id: 'p2', name: 'Bananes regime', description: 'Régime de bananes mûres', price: 1500, category: 'Fruits & Légumes', imageUrl: 'https://images.pexels.com/photos/28736731/pexels-photo-28736731.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', unit: 'régime', promo: 10 },
-  { id: 'p3', name: 'Riz parfumé 5kg', description: 'Sac de riz parfumé de qualité supérieure', price: 4500, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', unit: 'sac' },
-  { id: 'p4', name: 'Pain frais', description: 'Baguette fraîche du jour', price: 200, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/9120377/pexels-photo-9120377.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', unit: 'pièce' },
-  { id: 'p5', name: 'Croissants (x6)', description: 'Croissants beurre frais', price: 1800, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/21847830/pexels-photo-21847830.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', unit: 'lot', promo: 15 },
-  { id: 'p6', name: 'Poisson braisé', description: 'Poisson frais braisé avec sauce', price: 3500, category: 'Restaurants', imageUrl: 'https://images.pexels.com/photos/20067063/pexels-photo-20067063.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm4', unit: 'plat' },
-  { id: 'p7', name: 'Plat traditionnel', description: 'Attieké poisson frit', price: 2500, category: 'Restaurants', imageUrl: 'https://images.pexels.com/photos/28736727/pexels-photo-28736727.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm4', unit: 'plat' },
-  { id: 'p8', name: "Jus d'orange 1L", description: 'Jus naturel sans sucre ajouté', price: 1000, category: 'Boissons', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', unit: 'bouteille' },
-  { id: 'p9', name: 'Savon de toilette', description: 'Lot de 4 savons', price: 800, category: 'Hygiène', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', unit: 'lot' },
-  { id: 'p10', name: 'Panier de légumes', description: 'Assortiment de légumes frais du marché', price: 3000, category: 'Fruits & Légumes', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: false, merchantId: 'm1', unit: 'panier' },
-  { id: 'p11', name: 'Eau minérale 6x1.5L', description: "Pack d'eau minérale naturelle", price: 1200, category: 'Boissons', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', unit: 'pack' },
-  { id: 'p12', name: 'Pâtisseries assorties', description: 'Plateau de pâtisseries variées', price: 4000, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', unit: 'plateau', promo: 20 },
+// ─── Category tree ───────────────────────────────────────────────────────────
+
+export const productCategories: ProductCategory[] = [
+  {
+    id: 'cat-food',
+    name: 'Alimentation & Marché',
+    icon: 'ShoppingBasket',
+    subcategories: ['Fruits', 'Légumes', 'Manioc & Tubercules', 'Riz & Céréales', 'Huile & Condiments', 'Boissons', 'Poisson & Viande'],
+  },
+  {
+    id: 'cat-school',
+    name: 'Fournitures scolaires',
+    icon: 'GraduationCap',
+    subcategories: ['Cahiers', 'Stylos & Écriture', 'Sacs à dos', 'Livres', 'Calculatrices', 'Règles & Maths', 'Feuilles & Classeurs', 'Lots rentrée scolaire'],
+  },
+  {
+    id: 'cat-office',
+    name: 'Fournitures de bureau',
+    icon: 'Briefcase',
+    subcategories: ['Papier', 'Imprimantes', 'Cartouches & Encre', 'Accessoires de bureau'],
+  },
+  {
+    id: 'cat-tech',
+    name: 'Téléphones & Électronique',
+    icon: 'Smartphone',
+    subcategories: ['Téléphones', 'Accessoires téléphone', 'Ordinateurs', 'Téléviseurs', 'Audio & Vidéo'],
+  },
+  {
+    id: 'cat-fashion',
+    name: 'Vêtements & Accessoires',
+    icon: 'Shirt',
+    subcategories: ['Vêtements homme', 'Vêtements femme', 'Chaussures', 'Sacs', 'Accessoires mode'],
+  },
+  {
+    id: 'cat-home',
+    name: 'Maison & Électroménager',
+    icon: 'Home',
+    subcategories: ['Meubles', 'Cuisine', 'Électroménager', 'Décoration'],
+  },
+  {
+    id: 'cat-beauty',
+    name: 'Beauté, Hygiène & Entretien',
+    icon: 'Sparkles',
+    subcategories: ['Beauté & Soins', 'Hygiène', 'Produits d\'entretien', 'Bricolage & Outillage'],
+  },
 ];
 
-export const productCategories = [
-  { name: 'Alimentation', icon: 'ShoppingBasket' },
-  { name: 'Fruits & Légumes', icon: 'Apple' },
-  { name: 'Boissons', icon: 'Coffee' },
-  { name: 'Hygiène', icon: 'Sparkles' },
-  { name: 'Maison', icon: 'Home' },
-  { name: 'Restaurants', icon: 'UtensilsCrossed' },
+// Flat list for backward compatibility (old code references category names)
+export const categoryNames = productCategories.map((c) => c.name);
+
+// ─── Products ────────────────────────────────────────────────────────────────
+
+export const demoProducts: Product[] = [
+  // ─── Alimentation & Marché ───
+  { id: 'p1', name: 'Ananas frais', description: 'Ananas mûr du marché local', price: 500, category: 'Alimentation & Marché', subcategory: 'Fruits', imageUrl: 'https://images.pexels.com/photos/37126231/pexels-photo-37126231.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'pièce', saleType: 'both', wholesalePrice: 350, wholesaleMinQty: 10, stock: 80 },
+  { id: 'p2', name: 'Bananes régime', description: 'Régime de bananes mûres', price: 1500, category: 'Alimentation & Marché', subcategory: 'Fruits', imageUrl: 'https://images.pexels.com/photos/28736731/pexels-photo-28736731.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'régime', promo: 10, saleType: 'both', wholesalePrice: 1200, wholesaleMinQty: 5, stock: 25, promoValidUntil: '2026-11-15', promoConditions: 'Dans la limite des stocks disponibles' },
+  { id: 'p3', name: 'Riz parfumé 5kg', description: 'Sac de riz parfumé de qualité supérieure', price: 4500, category: 'Alimentation & Marché', subcategory: 'Riz & Céréales', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'sac', saleType: 'both', wholesalePrice: 4000, wholesaleMinQty: 10, stock: 60, quantityTiers: [{ minQty: 10, pricePerUnit: 4000 }, { minQty: 50, pricePerUnit: 3700 }] },
+  { id: 'p4', name: 'Pain frais', description: 'Baguette fraîche du jour', price: 200, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/9120377/pexels-photo-9120377.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'pièce', saleType: 'retail', stock: 100 },
+  { id: 'p5', name: 'Croissants (x6)', description: 'Croissants beurre frais', price: 1800, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/21847830/pexels-photo-21847830.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'lot', promo: 15, saleType: 'both', wholesalePrice: 1500, wholesaleMinQty: 6, stock: 30, promoValidUntil: '2026-11-10' },
+  { id: 'p6', name: 'Poisson braisé', description: 'Poisson frais braisé avec sauce', price: 3500, category: 'Restaurants', imageUrl: 'https://images.pexels.com/photos/20067063/pexels-photo-20067063.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm4', merchantName: 'Restaurant Le Baoulé', unit: 'plat', saleType: 'retail', stock: 15 },
+  { id: 'p7', name: 'Plat traditionnel', description: 'Attieké poisson frit', price: 2500, category: 'Restaurants', imageUrl: 'https://images.pexels.com/photos/28736727/pexels-photo-28736727.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm4', merchantName: 'Restaurant Le Baoulé', unit: 'plat', saleType: 'retail', stock: 20 },
+  { id: 'p8', name: "Jus d'orange 1L", description: 'Jus naturel sans sucre ajouté', price: 1000, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'bouteille', saleType: 'both', wholesalePrice: 800, wholesaleMinQty: 12, stock: 48 },
+  { id: 'p9', name: 'Savon de toilette', description: 'Lot de 4 savons', price: 800, category: 'Beauté, Hygiène & Entretien', subcategory: 'Hygiène', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'lot', saleType: 'both', wholesalePrice: 650, wholesaleMinQty: 10, stock: 40 },
+  { id: 'p10', name: 'Panier de légumes', description: 'Assortiment de légumes frais du marché', price: 3000, category: 'Alimentation & Marché', subcategory: 'Légumes', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: false, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'panier', saleType: 'retail', stock: 0 },
+  { id: 'p11', name: 'Eau minérale 6x1.5L', description: "Pack d'eau minérale naturelle", price: 1200, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'pack', saleType: 'both', wholesalePrice: 1000, wholesaleMinQty: 10, stock: 100, quantityTiers: [{ minQty: 10, pricePerUnit: 1000 }, { minQty: 50, pricePerUnit: 900 }] },
+  { id: 'p12', name: 'Pâtisseries assorties', description: 'Plateau de pâtisseries variées', price: 4000, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'plateau', promo: 20, saleType: 'retail', stock: 12, promoValidUntil: '2026-11-05', promoConditions: 'Un plateau par client' },
+  // ─── Fruits & Légumes supplémentaires ───
+  { id: 'p13', name: 'Oranges douces (kg)', description: 'Oranges fraîches et juteuses', price: 600, category: 'Alimentation & Marché', subcategory: 'Fruits', imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'kg', saleType: 'both', wholesalePrice: 450, wholesaleMinQty: 20, stock: 150 },
+  { id: 'p14', name: 'Manioc frais (kg)', description: 'Manioc fraîchement récolté', price: 300, category: 'Alimentation & Marché', subcategory: 'Manioc & Tubercules', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'kg', saleType: 'both', wholesalePrice: 200, wholesaleMinQty: 25, stock: 200 },
+  { id: 'p15', name: 'Oignons (sac 25kg)', description: 'Sac d\'oignons secs', price: 8000, category: 'Alimentation & Marché', subcategory: 'Huile & Condiments', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'sac', saleType: 'wholesale', wholesalePrice: 6500, wholesaleMinQty: 5, stock: 40 },
+  { id: 'p16', name: 'Piment frais (kg)', description: 'Piment frais pour cuisine', price: 800, category: 'Alimentation & Marché', subcategory: 'Huile & Condiments', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm1', merchantName: "Marché d'Adjamé", unit: 'kg', saleType: 'both', wholesalePrice: 600, wholesaleMinQty: 10, stock: 60 },
+  { id: 'p17', name: 'Huile végétale 1L', description: 'Huile de cuisine végétale', price: 1200, category: 'Alimentation & Marché', subcategory: 'Huile & Condiments', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'litre', saleType: 'both', wholesalePrice: 1000, wholesaleMinQty: 12, stock: 80, quantityTiers: [{ minQty: 12, pricePerUnit: 1000 }, { minQty: 48, pricePerUnit: 950 }] },
+  // ─── Fournitures scolaires ───
+  { id: 'p20', name: 'Cahier 200 pages', description: 'Cahier ligné grand format', price: 500, category: 'Fournitures scolaires', subcategory: 'Cahiers', imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'both', wholesalePrice: 350, wholesaleMinQty: 20, stock: 300, quantityTiers: [{ minQty: 20, pricePerUnit: 350 }, { minQty: 100, pricePerUnit: 300 }] },
+  { id: 'p21', name: 'Stylo bille (lot de 10)', description: 'Lot de 10 stylos bille bleus', price: 1000, category: 'Fournitures scolaires', subcategory: 'Stylos & Écriture', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'lot', saleType: 'both', wholesalePrice: 700, wholesaleMinQty: 10, stock: 150 },
+  { id: 'p22', name: 'Sac à dos scolaire', description: 'Sac à dos robuste avec compartiments', price: 5000, category: 'Fournitures scolaires', subcategory: 'Sacs à dos', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 30, promo: 10, promoValidUntil: '2026-11-30', promoConditions: 'Rentrée scolaire' },
+  { id: 'p23', name: 'Calculatrice scientifique', description: 'Calculatrice avec fonctions avancées', price: 8000, category: 'Fournitures scolaires', subcategory: 'Calculatrices', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 18 },
+  { id: 'p24', name: 'Règle graduée 30cm', description: 'Règle transparente 30 cm', price: 200, category: 'Fournitures scolaires', subcategory: 'Règles & Maths', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'both', wholesalePrice: 120, wholesaleMinQty: 30, stock: 200 },
+  { id: 'p25', name: 'Feuilles A4 (ramette 500)', description: 'Ramette de 500 feuilles A4 80g', price: 3000, category: 'Fournitures de bureau', subcategory: 'Papier', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'paquet', saleType: 'both', wholesalePrice: 2500, wholesaleMinQty: 10, stock: 120, quantityTiers: [{ minQty: 10, pricePerUnit: 2500 }, { minQty: 50, pricePerUnit: 2200 }] },
+  { id: 'p26', name: 'Lot rentrée CE2', description: 'Cahiers, stylos, règle, ardoise — lot complet CE2', price: 15000, category: 'Fournitures scolaires', subcategory: 'Lots rentrée scolaire', imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'lot', saleType: 'retail', stock: 25, promo: 12, promoValidUntil: '2026-12-01', promoConditions: 'Lot complet pour la rentrée' },
+  // ─── Fournitures de bureau ───
+  { id: 'p30', name: 'Imprimante laser', description: 'Imprimante laser noir & blanc', price: 85000, category: 'Fournitures de bureau', subcategory: 'Imprimantes', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 8 },
+  { id: 'p31', name: 'Cartouche encre noire', description: 'Cartouche compatible, impression haute qualité', price: 5000, category: 'Fournitures de bureau', subcategory: 'Cartouches & Encre', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'both', wholesalePrice: 4000, wholesaleMinQty: 10, stock: 50 },
+  // ─── Téléphones & Électronique ───
+  { id: 'p40', name: 'Smartphone 64GB', description: 'Téléphone Android double SIM, 64 Go', price: 75000, category: 'Téléphones & Électronique', subcategory: 'Téléphones', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'both', wholesalePrice: 65000, wholesaleMinQty: 5, stock: 15, promo: 8, promoValidUntil: '2026-11-20' },
+  { id: 'p41', name: 'Coque de protection', description: 'Coque silicone anti-choc, plusieurs modèles', price: 1500, category: 'Téléphones & Électronique', subcategory: 'Accessoires téléphone', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 80 },
+  { id: 'p42', name: 'Téléviseur LED 32"', description: 'TV LED HD, HDMI, USB', price: 120000, category: 'Téléphones & Électronique', subcategory: 'Téléviseurs', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 6 },
+  { id: 'p43', name: 'Ordinateur portable', description: 'Laptop 8GB RAM, 256GB SSD', price: 250000, category: 'Téléphones & Électronique', subcategory: 'Ordinateurs', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm5', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 4 },
+  // ─── Vêtements & Accessoires ───
+  { id: 'p50', name: 'T-shirt homme', description: 'T-shirt coton, tailles M-XL', price: 3500, category: 'Vêtements & Accessoires', subcategory: 'Vêtements homme', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pièce', saleType: 'both', wholesalePrice: 2500, wholesaleMinQty: 10, stock: 60, promo: 15, promoValidUntil: '2026-11-15' },
+  { id: 'p51', name: 'Chaussures sport', description: 'Baskets running, tailles 39-44', price: 15000, category: 'Vêtements & Accessoires', subcategory: 'Chaussures', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pair', saleType: 'retail', stock: 24 },
+  { id: 'p52', name: 'Sac à main cuir', description: 'Sac à main en cuir véritable', price: 18000, category: 'Vêtements & Accessoires', subcategory: 'Sacs', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pièce', saleType: 'retail', stock: 10 },
+  // ─── Maison & Électroménager ───
+  { id: 'p60', name: 'Chaise plastique', description: 'Chaise plastique robuste', price: 2500, category: 'Maison & Électroménager', subcategory: 'Meubles', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pièce', saleType: 'both', wholesalePrice: 1800, wholesaleMinQty: 10, stock: 50, quantityTiers: [{ minQty: 10, pricePerUnit: 1800 }, { minQty: 50, pricePerUnit: 1500 }] },
+  { id: 'p61', name: 'Marmite en aluminium', description: 'Marmite de cuisine 5 litres', price: 6000, category: 'Maison & Électroménager', subcategory: 'Cuisine', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pièce', saleType: 'retail', stock: 15 },
+  { id: 'p62', name: 'Réfrigérateur 150L', description: 'Réfrigérateur compresseur 150 litres', price: 150000, category: 'Maison & Électroménager', subcategory: 'Électroménager', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'pièce', saleType: 'retail', stock: 3 },
+  // ─── Beauté, Hygiène & Entretien ───
+  { id: 'p70', name: 'Crème hydratante', description: 'Crème pour peau sèche 200ml', price: 2500, category: 'Beauté, Hygiène & Entretien', subcategory: 'Beauté & Soins', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'pièce', saleType: 'retail', stock: 40 },
+  { id: 'p71', name: 'Détergent 5kg', description: 'Poudre de lavage concentrée, seau 5kg', price: 4000, category: 'Beauté, Hygiène & Entretien', subcategory: "Produits d'entretien", imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm2', merchantName: 'Boutique Yopougon', unit: 'sac', saleType: 'both', wholesalePrice: 3200, wholesaleMinQty: 10, stock: 35, quantityTiers: [{ minQty: 10, pricePerUnit: 3200 }, { minQty: 50, pricePerUnit: 2900 }] },
+  { id: 'p72', name: 'Pinceau et tournevis', description: 'Set de bricolage 12 pièces', price: 8000, category: 'Beauté, Hygiène & Entretien', subcategory: 'Bricolage & Outillage', imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=400&w=400', available: true, merchantId: 'm6', merchantName: 'Boutique Marcory', unit: 'set', saleType: 'retail', stock: 12 },
 ];
+
+// ─── Partners ────────────────────────────────────────────────────────────────
 
 export const demoPartners: Partner[] = [
   { id: 'pt1', name: "Marché d'Adjamé", type: 'market', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=400&w=600', location: 'Adjamé', hours: '6h - 19h', rating: 4.5, commune: 'Adjamé' },
@@ -49,11 +136,80 @@ export const demoPartners: Partner[] = [
   { id: 'pt6', name: 'Services Express', type: 'service', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=400&w=600', location: 'Treichville', hours: '24h/24', rating: 4.6, commune: 'Treichville' },
 ];
 
+// ─── Promotions (linked to real products) ────────────────────────────────────
+
 export const demoPromotions: Promotion[] = [
-  { id: 'pr1', title: '-20% sur la livraison ce week-end', description: 'Profitez de frais de livraison réduits sur toutes vos commandes du samedi et dimanche.', discount: '-20%', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true },
-  { id: 'pr2', title: 'Menu du jour à 2000 FCFA', description: 'Attieké poisson + jus naturel. Offre limitée au restaurant Le Baoulé.', discount: '2000 F', imageUrl: 'https://images.pexels.com/photos/28736727/pexels-photo-28736727.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true },
-  { id: 'pr3', title: 'Pâtisseries -20%', description: 'Sur tous les plateaux de pâtisseries à la Boulangerie Cocody.', discount: '-20%', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true },
+  { id: 'pr1', title: 'Bananes régime -10%', description: 'Régimes de bananes mûres en promotion. Idéal pour les revendeurs.', discount: '-10%', imageUrl: 'https://images.pexels.com/photos/28736731/pexels-photo-28736731.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p2', originalPrice: 1500, promoPrice: 1350, validUntil: '2026-11-15', conditions: 'Dans la limite des stocks disponibles' },
+  { id: 'pr2', title: 'Croissants (x6) -15%', description: 'Lots de 6 croissants beurre frais à prix réduit.', discount: '-15%', imageUrl: 'https://images.pexels.com/photos/21847830/pexels-photo-21847830.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p5', originalPrice: 1800, promoPrice: 1530, validUntil: '2026-11-10' },
+  { id: 'pr3', title: 'Pâtisseries assorties -20%', description: 'Plateau de pâtisseries variées. Un plateau par client.', discount: '-20%', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p12', originalPrice: 4000, promoPrice: 3200, validUntil: '2026-11-05', conditions: 'Un plateau par client' },
+  { id: 'pr4', title: 'T-shirt homme -15%', description: 'T-shirts coton, tailles M à XL.', discount: '-15%', imageUrl: 'https://images.pexels.com/photos/13311393/pexels-photo-13311393.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p50', originalPrice: 3500, promoPrice: 2975, validUntil: '2026-11-15' },
+  { id: 'pr5', title: 'Lot rentrée CE2 -12%', description: 'Cahiers, stylos, règle, ardoise — lot complet pour la rentrée.', discount: '-12%', imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p26', originalPrice: 15000, promoPrice: 13200, validUntil: '2026-12-01', conditions: 'Lot complet pour la rentrée' },
+  { id: 'pr6', title: 'Riz parfumé 5kg — prix de gros', description: 'Dès 10 sacs : 4000 FCFA/sac. Dès 50 sacs : 3700 FCFA/sac.', discount: 'Prix de gros', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p3', bulkDeal: true, minQty: 10 },
+  { id: 'pr7', title: 'Eau minérale 6x1.5L — prix de gros', description: 'Dès 10 packs : 1000 FCFA/pack. Dès 50 packs : 900 FCFA/pack.', discount: 'Prix de gros', imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p11', bulkDeal: true, minQty: 10 },
+  { id: 'pr8', title: 'Feuilles A4 — prix de gros', description: 'Dès 10 ramettes : 2500 FCFA. Dès 50 ramettes : 2200 FCFA.', discount: 'Prix de gros', imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=300&w=800', active: true, productId: 'p25', bulkDeal: true, minQty: 10 },
 ];
+
+// ─── Supply Lists ────────────────────────────────────────────────────────────
+
+export const demoSupplyLists: SupplyList[] = [
+  {
+    id: 'sl1',
+    name: 'Rentrée scolaire CE2',
+    description: 'Liste complète de fournitures pour un élève de CE2',
+    icon: 'GraduationCap',
+    category: 'Fournitures scolaires',
+    editable: true,
+    items: [
+      { productId: 'p20', name: 'Cahier 200 pages', quantity: 4, unit: 'pièce', price: 500, imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p21', name: 'Stylo bille (lot de 10)', quantity: 1, unit: 'lot', price: 1000, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p24', name: 'Règle graduée 30cm', quantity: 1, unit: 'pièce', price: 200, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p23', name: 'Calculatrice scientifique', quantity: 1, unit: 'pièce', price: 8000, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+    ],
+  },
+  {
+    id: 'sl2',
+    name: 'Fournitures de bureau',
+    description: 'Pack de démarrage pour un petit bureau',
+    icon: 'Briefcase',
+    category: 'Fournitures de bureau',
+    editable: true,
+    items: [
+      { productId: 'p25', name: 'Feuilles A4 (ramette 500)', quantity: 5, unit: 'paquet', price: 3000, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p21', name: 'Stylo bille (lot de 10)', quantity: 3, unit: 'lot', price: 1000, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p31', name: 'Cartouche encre noire', quantity: 2, unit: 'pièce', price: 5000, imageUrl: 'https://images.pexels.com/photos/36470055/pexels-photo-36470055.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+    ],
+  },
+  {
+    id: 'sl3',
+    name: 'Courses alimentaires semaine',
+    description: 'Les essentiels pour une semaine de cuisine locale',
+    icon: 'ShoppingBasket',
+    category: 'Alimentation & Marché',
+    editable: true,
+    items: [
+      { productId: 'p3', name: 'Riz parfumé 5kg', quantity: 1, unit: 'sac', price: 4500, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p17', name: 'Huile végétale 1L', quantity: 2, unit: 'litre', price: 1200, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p13', name: 'Oranges douces (kg)', quantity: 2, unit: 'kg', price: 600, imageUrl: 'https://images.pexels.com/photos/32763320/pexels-photo-32763320.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p16', name: 'Piment frais (kg)', quantity: 1, unit: 'kg', price: 800, imageUrl: 'https://images.pexels.com/photos/35485717/pexels-photo-35485717.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p8', name: "Jus d'orange 1L", quantity: 2, unit: 'bouteille', price: 1000, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+    ],
+  },
+  {
+    id: 'sl4',
+    name: 'Lot commerce — revendeur',
+    description: 'Lot de gros pour revendeurs de denrées alimentaires',
+    icon: 'Package',
+    category: 'Alimentation & Marché',
+    editable: true,
+    items: [
+      { productId: 'p3', name: 'Riz parfumé 5kg', quantity: 10, unit: 'sac', price: 4000, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p11', name: 'Eau minérale 6x1.5L', quantity: 10, unit: 'pack', price: 1000, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+      { productId: 'p17', name: 'Huile végétale 1L', quantity: 12, unit: 'litre', price: 1000, imageUrl: 'https://images.pexels.com/photos/36943007/pexels-photo-36943007.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true },
+    ],
+  },
+];
+
+// ─── Orders ──────────────────────────────────────────────────────────────────
 
 export const demoOrders: Order[] = [
   {
@@ -142,9 +298,9 @@ export const driverHistory: Order[] = [
 ];
 
 export const merchantProducts: Product[] = [
-  { id: 'mp1', name: 'Pain frais', description: 'Baguette fraîche du jour', price: 200, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/9120377/pexels-photo-9120377.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true, merchantId: 'm3', unit: 'pièce' },
-  { id: 'mp2', name: 'Croissants (x6)', description: 'Croissants beurre frais', price: 1800, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/21847830/pexels-photo-21847830.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true, merchantId: 'm3', unit: 'lot', promo: 15 },
-  { id: 'mp3', name: 'Pâtisseries assorties', description: 'Plateau de pâtisseries variées', price: 4000, category: 'Alimentation', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: false, merchantId: 'm3', unit: 'plateau', promo: 20 },
+  { id: 'mp1', name: 'Pain frais', description: 'Baguette fraîche du jour', price: 200, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/9120377/pexels-photo-9120377.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'pièce', saleType: 'retail', stock: 100 },
+  { id: 'mp2', name: 'Croissants (x6)', description: 'Croissants beurre frais', price: 1800, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/21847830/pexels-photo-21847830.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: true, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'lot', promo: 15, saleType: 'both', wholesalePrice: 1500, wholesaleMinQty: 6, stock: 30, promoValidUntil: '2026-11-10' },
+  { id: 'mp3', name: 'Pâtisseries assorties', description: 'Plateau de pâtisseries variées', price: 4000, category: 'Alimentation & Marché', subcategory: 'Boissons', imageUrl: 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=200&w=200', available: false, merchantId: 'm3', merchantName: 'Boulangerie Cocody', unit: 'plateau', promo: 20, saleType: 'retail', stock: 0, promoValidUntil: '2026-11-05', promoConditions: 'Un plateau par client' },
 ];
 
 export const merchantOrders: Order[] = [
@@ -194,4 +350,28 @@ export const orderTypeLabels: Record<string, string> = {
 
 export function formatFCFA(amount: number): string {
   return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
+}
+
+// Helper: get price for a product at a given quantity (handles tiers + wholesale)
+export function getPriceForQty(product: Product, qty: number, useWholesale: boolean): number {
+  if (useWholesale && product.wholesalePrice && product.wholesaleMinQty && qty >= product.wholesaleMinQty) {
+    if (product.quantityTiers) {
+      const tier = [...product.quantityTiers].reverse().find((t) => qty >= t.minQty);
+      if (tier) return tier.pricePerUnit;
+    }
+    return product.wholesalePrice;
+  }
+  const base = product.promo ? Math.round(product.price * (1 - product.promo / 100)) : product.price;
+  return base;
+}
+
+// Helper: check if promo is valid
+export function isPromoValid(product: Product): boolean {
+  if (!product.promo) return false;
+  if (product.promoValidUntil) {
+    const now = new Date();
+    const until = new Date(product.promoValidUntil);
+    return until >= now;
+  }
+  return true;
 }

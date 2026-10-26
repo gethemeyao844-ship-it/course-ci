@@ -6,6 +6,7 @@ export type AppPage =
   | 'home' | 'errand' | 'products' | 'restaurants' | 'parcel'
   | 'orders' | 'order-detail' | 'profile' | 'messages'
   | 'addresses' | 'payments' | 'help' | 'settings'
+  | 'marketplace' | 'supply-lists' | 'promotions'
   // driver
   | 'driver-home' | 'driver-mission' | 'driver-history' | 'driver-profile'
   // merchant

@@ -12,14 +12,17 @@ export type OrderStatus =
 
 export type OrderType = 'errand' | 'product' | 'restaurant' | 'parcel';
 
-export interface User {
-  id: string;
-  name: string;
-  phone: string;
-  email?: string;
-  role: UserRole;
-  commune?: string;
-  avatarUrl?: string;
+export type SaleType = 'retail' | 'wholesale' | 'both';
+
+export type ProductUnit =
+  | 'pièce' | 'kg' | 'g' | 'litre' | 'sac' | 'carton'
+  | 'caisse' | 'paquet' | 'lot' | 'bouteille' | 'pack'
+  | 'plat' | 'plateau' | 'régime' | 'panier' | 'pair'
+  | 'boîte' | 'set' | 'unité';
+
+export interface QuantityTier {
+  minQty: number;
+  pricePerUnit: number;
 }
 
 export interface Product {
@@ -28,11 +31,21 @@ export interface Product {
   description: string;
   price: number;
   category: string;
+  subcategory?: string;
   imageUrl: string;
   available: boolean;
   merchantId: string;
+  merchantName?: string;
   promo?: number;
   unit?: string;
+  saleType?: SaleType;
+  wholesalePrice?: number;
+  wholesaleMinQty?: number;
+  stock?: number;
+  quantityTiers?: QuantityTier[];
+  promoValidUntil?: string;
+  promoConditions?: string;
+  deliveryZone?: string;
 }
 
 export interface CartItem {
@@ -43,6 +56,7 @@ export interface CartItem {
   imageUrl: string;
   unit?: string;
   instructions?: string;
+  saleType?: SaleType;
 }
 
 export interface OrderItem {
@@ -96,6 +110,13 @@ export interface Promotion {
   discount: string;
   imageUrl: string;
   active: boolean;
+  productId?: string;
+  originalPrice?: number;
+  promoPrice?: number;
+  validUntil?: string;
+  conditions?: string;
+  bulkDeal?: boolean;
+  minQty?: number;
 }
 
 export interface ErrandItem {
@@ -123,4 +144,31 @@ export interface Notification {
   time: string;
   read: boolean;
   type: 'order' | 'promo' | 'system';
+}
+
+export interface SupplyListItem {
+  productId: string;
+  name: string;
+  quantity: number;
+  unit?: string;
+  price?: number;
+  imageUrl?: string;
+  available?: boolean;
+}
+
+export interface SupplyList {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+  editable: boolean;
+  items: SupplyListItem[];
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  icon: string;
+  subcategories: string[];
 }
