@@ -14,6 +14,8 @@ export type OrderType = 'errand' | 'product' | 'restaurant' | 'parcel';
 
 export type SaleType = 'retail' | 'wholesale' | 'both';
 
+export type ProductCondition = 'neuf' | 'occasion';
+
 export type ProductUnit =
   | 'pièce' | 'kg' | 'g' | 'litre' | 'sac' | 'carton'
   | 'caisse' | 'paquet' | 'lot' | 'bouteille' | 'pack'
@@ -46,6 +48,10 @@ export interface Product {
   promoValidUntil?: string;
   promoConditions?: string;
   deliveryZone?: string;
+  condition?: ProductCondition;
+  brand?: string;
+  size?: string;
+  color?: string;
 }
 
 export interface CartItem {
