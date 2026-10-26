@@ -1,9 +1,8 @@
 import {
   User, Package, MapPinned, CreditCard, HelpCircle, Settings,
-  LogOut, ChevronRight, Bell, Globe, Moon, Shield, Star,
+  LogOut, ChevronRight, Bell, Star,
 } from 'lucide-react';
 import { useApp, type AppPage } from '@/context';
-import { formatFCFA } from '@/data';
 
 export function ProfilePage() {
   const { user, setPage, logout, orders } = useApp();

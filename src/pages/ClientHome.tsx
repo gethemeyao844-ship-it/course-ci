@@ -1,6 +1,6 @@
 import {
   ShoppingBasket, ShoppingBag, UtensilsCrossed, Package,
-  Star, ArrowRight, MapPin, Clock, TrendingUp, Bell, ChevronRight,
+  Star, ArrowRight, MapPin, TrendingUp, Bell, ChevronRight,
 } from 'lucide-react';
 import { useApp, type AppPage } from '@/context';
 import { demoPartners, demoPromotions, statusLabels, orderTypeLabels, formatFCFA } from '@/data';

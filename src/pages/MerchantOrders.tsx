@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Package, Clock, Check, X, MapPin, Phone, ChevronRight } from 'lucide-react';
+import { Package, Clock, Check, MapPin, Phone } from 'lucide-react';
 import { useApp } from '@/context';
-import { merchantOrders, statusLabels, orderTypeLabels, formatFCFA } from '@/data';
+import { merchantOrders, statusLabels, formatFCFA } from '@/data';
 
 export function MerchantOrders() {
-  const { setPage } = useApp();
   const [orders, setOrders] = useState(merchantOrders);
   const [filter, setFilter] = useState('all');
 

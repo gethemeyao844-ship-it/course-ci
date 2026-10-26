@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
-  Home, ShoppingBag, MessageCircle, User, Bell, Menu, X,
+  Home, MessageCircle, User, Bell, Menu, X,
   MapPin, ShoppingCart, ChevronDown, LogOut, Package, CreditCard,
-  HelpCircle, Settings, MapPinned, Receipt,
+  HelpCircle, Settings, MapPinned,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useApp, type AppPage } from '@/context';

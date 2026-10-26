@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Bike, Power, MapPin, Navigation, Check, X, Clock, Phone,
+  Bike, Power, MapPin, Navigation, Check, X,
   Package, ShoppingBag, UtensilsCrossed, ChevronRight, Star,
 } from 'lucide-react';
 import { useApp } from '@/context';
@@ -8,7 +8,7 @@ import { driverOrders, statusLabels, orderTypeLabels, formatFCFA } from '@/data'
 import type { Order } from '@/types';
 
 export function DriverHome() {
-  const { setPage, setSelectedDriverOrderId } = useApp();
+  const { setPage } = useApp();
   const [available, setAvailable] = useState(true);
   const [assignedOrder, setAssignedOrder] = useState<Order | null>(null);
   const [availableOrders, setAvailableOrders] = useState(driverOrders.filter((o) => o.status === 'awaiting_driver'));

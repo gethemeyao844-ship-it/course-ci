@@ -19,7 +19,7 @@ const navItems: { page: AppPage; label: string; icon: typeof LayoutDashboard }[]
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, setPage, logout, page } = useApp();
+  const { setPage, logout, page } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (

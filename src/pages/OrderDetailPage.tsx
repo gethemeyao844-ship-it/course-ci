@@ -1,4 +1,4 @@
-import { ArrowLeft, MapPin, Phone, Clock, Package, User, Store, Navigation, MessageCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Clock, User, Store, Navigation, MessageCircle } from 'lucide-react';
 import { useApp } from '@/context';
 import { statusLabels, orderTypeLabels, formatFCFA } from '@/data';
 

@@ -1,12 +1,12 @@
 import {
   Users, Package, Clock, Bike, TrendingUp, Store, AlertCircle,
-  Check, MapPin, Tags, Megaphone, ArrowRight, Wallet, Star,
+  Check, MapPin, Tags, Megaphone, ArrowRight, Wallet,
 } from 'lucide-react';
 import { useApp, type AppPage } from '@/context';
 import { adminStats, demoProducts, demoPartners, demoPromotions, COMMUNES, formatFCFA } from '@/data';
 
 export function AdminHome() {
-  const { setPage, user } = useApp();
+  const { setPage } = useApp();
 
   const stats = [
     { label: 'Clients', value: adminStats.totalClients.toLocaleString(), icon: Users, color: 'text-navy-700', bg: 'bg-navy-50', page: 'admin-accounts' as AppPage },

@@ -25,6 +25,10 @@ import { MerchantOrders } from '@/pages/MerchantOrders';
 import { MerchantProfile } from '@/pages/MerchantProfile';
 import { AdminLayout } from '@/components/AdminLayout';
 import { AdminHome } from '@/pages/AdminHome';
+import {
+  AdminProducts, AdminCategories, AdminMerchants, AdminDrivers,
+  AdminPromotions, AdminZones, AdminClaims, AdminAccounts,
+} from '@/pages/AdminPages';
 
 function Router() {
   const { isLoggedIn, user, page } = useApp();
@@ -36,11 +40,20 @@ function Router() {
   const role = user?.role;
 
   if (role === 'admin') {
-    return (
-      <AdminLayout>
-        <AdminHome />
-      </AdminLayout>
-    );
+    let content;
+    switch (page) {
+      case 'admin-home': content = <AdminHome />; break;
+      case 'admin-products': content = <AdminProducts />; break;
+      case 'admin-categories': content = <AdminCategories />; break;
+      case 'admin-merchants': content = <AdminMerchants />; break;
+      case 'admin-drivers': content = <AdminDrivers />; break;
+      case 'admin-promotions': content = <AdminPromotions />; break;
+      case 'admin-zones': content = <AdminZones />; break;
+      case 'admin-claims': content = <AdminClaims />; break;
+      case 'admin-accounts': content = <AdminAccounts />; break;
+      default: content = <AdminHome />;
+    }
+    return <AdminLayout>{content}</AdminLayout>;
   }
 
   if (role === 'driver') {

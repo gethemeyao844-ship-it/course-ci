@@ -1,4 +1,4 @@
-import { Star, Package, TrendingUp, Calendar, Check } from 'lucide-react';
+import { Star, TrendingUp, Check } from 'lucide-react';
 import { useApp } from '@/context';
 import { driverHistory, orderTypeLabels, formatFCFA } from '@/data';
 
