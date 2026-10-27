@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Home, MessageCircle, User, Bell, Menu, X,
   MapPin, ShoppingCart, ChevronDown, LogOut, Package, CreditCard,
-  HelpCircle, Settings, MapPinned,
+  HelpCircle, Settings, MapPinned, Wallet,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useApp, type AppPage } from '@/context';
@@ -34,6 +34,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     { page: 'profile', label: 'Mon profil', icon: User },
     { page: 'addresses', label: 'Mes adresses', icon: MapPinned },
     { page: 'payments', label: 'Moyens de paiement', icon: CreditCard },
+    { page: 'wallet', label: 'Mon portefeuille', icon: Wallet },
     { page: 'help', label: 'Aide et support', icon: HelpCircle },
     { page: 'settings', label: 'Paramètres', icon: Settings },
   ];

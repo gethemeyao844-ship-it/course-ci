@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, History, User, LogOut, Bike, Menu, X, Bell } from 'lucide-react';
+import { Home, History, User, LogOut, Bike, Menu, X, Bell, Wallet, FileText } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useApp, type AppPage } from '@/context';
 import { driverOrders } from '@/data';
@@ -7,6 +7,8 @@ import { driverOrders } from '@/data';
 const navItems: { page: AppPage; label: string; icon: typeof Home }[] = [
   { page: 'driver-home', label: 'Accueil', icon: Home },
   { page: 'driver-history', label: 'Historique', icon: History },
+  { page: 'driver-application', label: 'Candidature', icon: FileText },
+  { page: 'driver-wallet', label: 'Portefeuille', icon: Wallet },
   { page: 'driver-profile', label: 'Profil', icon: User },
 ];
 
@@ -80,7 +82,7 @@ export function DriverLayout({ children }: { children: React.ReactNode }) {
         <main className="flex-1 pb-20 lg:pb-0">{children}</main>
 
         <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-30">
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = page === item.page;

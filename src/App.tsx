@@ -16,6 +16,7 @@ import { MerchantSetupPage } from '@/pages/MerchantSetupPage';
 import { AdminPayments } from '@/pages/AdminPayments';
 import { AdminShops } from '@/pages/AdminShops';
 import { AdminDriverApps } from '@/pages/AdminDriverApps';
+import { WalletPage } from '@/pages/WalletPage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { ProfilePage } from '@/pages/ProfilePage';
@@ -76,6 +77,7 @@ function Router() {
       case 'driver-history': content = <DriverHistory />; break;
       case 'driver-profile': content = <DriverProfile />; break;
       case 'driver-application': content = <DriverApplicationPage />; break;
+      case 'driver-wallet': content = <WalletPage />; break;
       default: content = <DriverHome />;
     }
     return <DriverLayout>{content}</DriverLayout>;
@@ -89,6 +91,7 @@ function Router() {
       case 'merchant-orders': content = <MerchantOrders />; break;
       case 'merchant-profile': content = <MerchantProfile />; break;
       case 'merchant-setup': content = <MerchantSetupPage />; break;
+      case 'merchant-wallet': content = <WalletPage />; break;
       default: content = <MerchantHome />;
     }
     return <MerchantLayout>{content}</MerchantLayout>;
@@ -115,6 +118,7 @@ function Router() {
     case 'payments': content = <PaymentsPage />; break;
     case 'help': content = <HelpPage />; break;
     case 'settings': content = <SettingsPage />; break;
+    case 'wallet': content = <WalletPage />; break;
     default: content = <ClientHome />;
   }
   return <ClientLayout>{content}</ClientLayout>;

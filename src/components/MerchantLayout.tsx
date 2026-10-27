@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Package, ShoppingBag, User, LogOut, Store, Menu, X, Bell } from 'lucide-react';
+import { Home, Package, ShoppingBag, User, LogOut, Store, Menu, X, Bell, Wallet, FileText } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useApp, type AppPage } from '@/context';
 
@@ -7,6 +7,8 @@ const navItems: { page: AppPage; label: string; icon: typeof Home }[] = [
   { page: 'merchant-home', label: 'Tableau de bord', icon: Home },
   { page: 'merchant-products', label: 'Mes produits', icon: Package },
   { page: 'merchant-orders', label: 'Commandes', icon: ShoppingBag },
+  { page: 'merchant-setup', label: 'Ma boutique', icon: Store },
+  { page: 'merchant-wallet', label: 'Portefeuille', icon: Wallet },
   { page: 'merchant-profile', label: 'Profil', icon: User },
 ];
 
@@ -75,7 +77,7 @@ export function MerchantLayout({ children }: { children: React.ReactNode }) {
         <main className="flex-1 pb-20 lg:pb-0">{children}</main>
 
         <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-30">
-          <div className="grid grid-cols-4">
+          <div className="grid grid-cols-6">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = page === item.page;

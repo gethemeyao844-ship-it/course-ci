@@ -5,14 +5,14 @@ import { demoUser, demoNotifications, demoOrders, driverOrders, merchantOrders }
 export type AppPage =
   | 'home' | 'errand' | 'products' | 'restaurants' | 'parcel'
   | 'orders' | 'order-detail' | 'profile' | 'messages'
-  | 'addresses' | 'payments' | 'help' | 'settings'
+  | 'addresses' | 'payments' | 'help' | 'settings' | 'wallet'
   | 'marketplace' | 'supply-lists' | 'promotions' | 'checkout' | 'payment-history' | 'shops'
   // driver
   | 'driver-home' | 'driver-mission' | 'driver-history' | 'driver-profile'
-  | 'driver-application'
+  | 'driver-application' | 'driver-wallet'
   // merchant
   | 'merchant-home' | 'merchant-products' | 'merchant-orders' | 'merchant-profile'
-  | 'merchant-setup'
+  | 'merchant-setup' | 'merchant-wallet'
   // admin
   | 'admin-home' | 'admin-products' | 'admin-categories' | 'admin-merchants'
   | 'admin-drivers' | 'admin-promotions' | 'admin-zones' | 'admin-claims'
