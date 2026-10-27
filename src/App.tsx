@@ -36,6 +36,7 @@ import { MerchantOrders } from '@/pages/MerchantOrders';
 import { MerchantProfile } from '@/pages/MerchantProfile';
 import { AdminLayout } from '@/components/AdminLayout';
 import { AdminHome } from '@/pages/AdminHome';
+import { PWAInstallBanner } from '@/components/PWAInstallBanner';
 import {
   AdminProducts, AdminCategories, AdminMerchants, AdminDrivers,
   AdminPromotions, AdminZones, AdminClaims, AdminAccounts,
@@ -128,6 +129,7 @@ export default function App() {
   return (
     <AppProvider>
       <Router />
+      <PWAInstallBanner />
     </AppProvider>
   );
 }
