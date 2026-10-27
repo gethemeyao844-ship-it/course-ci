@@ -11,6 +11,11 @@ import { SupplyListsPage } from '@/pages/SupplyListsPage';
 import { PromotionsPage } from '@/pages/PromotionsPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 import { PaymentHistoryPage } from '@/pages/PaymentHistoryPage';
+import { DriverApplicationPage } from '@/pages/DriverApplicationPage';
+import { MerchantSetupPage } from '@/pages/MerchantSetupPage';
+import { AdminPayments } from '@/pages/AdminPayments';
+import { AdminShops } from '@/pages/AdminShops';
+import { AdminDriverApps } from '@/pages/AdminDriverApps';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { ProfilePage } from '@/pages/ProfilePage';
@@ -56,6 +61,9 @@ function Router() {
       case 'admin-zones': content = <AdminZones />; break;
       case 'admin-claims': content = <AdminClaims />; break;
       case 'admin-accounts': content = <AdminAccounts />; break;
+      case 'admin-payments': content = <AdminPayments />; break;
+      case 'admin-shops': content = <AdminShops />; break;
+      case 'admin-driver-apps': content = <AdminDriverApps />; break;
       default: content = <AdminHome />;
     }
     return <AdminLayout>{content}</AdminLayout>;
@@ -67,6 +75,7 @@ function Router() {
       case 'driver-home': content = <DriverHome />; break;
       case 'driver-history': content = <DriverHistory />; break;
       case 'driver-profile': content = <DriverProfile />; break;
+      case 'driver-application': content = <DriverApplicationPage />; break;
       default: content = <DriverHome />;
     }
     return <DriverLayout>{content}</DriverLayout>;
@@ -79,6 +88,7 @@ function Router() {
       case 'merchant-products': content = <MerchantProducts />; break;
       case 'merchant-orders': content = <MerchantOrders />; break;
       case 'merchant-profile': content = <MerchantProfile />; break;
+      case 'merchant-setup': content = <MerchantSetupPage />; break;
       default: content = <MerchantHome />;
     }
     return <MerchantLayout>{content}</MerchantLayout>;
@@ -92,6 +102,11 @@ function Router() {
     case 'products': content = <ProductsPage />; break;
     case 'restaurants': content = <RestaurantsPage />; break;
     case 'parcel': content = <ParcelPage />; break;
+    case 'marketplace': content = <MarketplacePage />; break;
+    case 'supply-lists': content = <SupplyListsPage />; break;
+    case 'promotions': content = <PromotionsPage />; break;
+    case 'checkout': content = <CheckoutPage />; break;
+    case 'payment-history': content = <PaymentHistoryPage />; break;
     case 'orders': content = <OrdersPage />; break;
     case 'order-detail': content = <OrderDetailPage />; break;
     case 'profile': content = <ProfilePage />; break;

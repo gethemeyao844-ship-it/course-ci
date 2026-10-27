@@ -9,12 +9,14 @@ export type AppPage =
   | 'marketplace' | 'supply-lists' | 'promotions' | 'checkout' | 'payment-history' | 'shops'
   // driver
   | 'driver-home' | 'driver-mission' | 'driver-history' | 'driver-profile'
+  | 'driver-application'
   // merchant
   | 'merchant-home' | 'merchant-products' | 'merchant-orders' | 'merchant-profile'
+  | 'merchant-setup'
   // admin
   | 'admin-home' | 'admin-products' | 'admin-categories' | 'admin-merchants'
   | 'admin-drivers' | 'admin-promotions' | 'admin-zones' | 'admin-claims'
-  | 'admin-accounts';
+  | 'admin-accounts' | 'admin-payments' | 'admin-shops' | 'admin-driver-apps';
 
 interface AppState {
   user: User | null;
@@ -28,6 +30,8 @@ interface AppState {
   login: (role: UserRole, name?: string) => void;
   logout: () => void;
   setPage: (page: AppPage) => void;
+  isAdminVerified: boolean;
+  setAdminVerified: (v: boolean) => void;
   setSelectedOrderId: (id: string | null) => void;
   setSelectedDriverOrderId: (id: string | null) => void;
   addToCart: (item: CartItem) => void;
@@ -48,6 +52,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(demoOrders);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [selectedDriverOrderId, setSelectedDriverOrderId] = useState<string | null>(null);
+  const [isAdminVerified, setAdminVerified] = useState(false);
 
   const login = (role: UserRole, name?: string) => {
     const newUser: User = {
@@ -76,6 +81,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setPage('home');
     setCart([]);
+    setAdminVerified(false);
   };
 
   const addToCart = (item: CartItem) => {
@@ -133,6 +139,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setPage,
         setSelectedOrderId,
         setSelectedDriverOrderId,
+        isAdminVerified,
+        setAdminVerified,
         addToCart,
         updateCartQty,
         removeFromCart,

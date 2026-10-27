@@ -16,6 +16,14 @@
     "payment-webhook": {
       "hasChanged": false,
       "hash": "36c0ac3861fc0b2d1ed0cd5fe17c8a49a487d7c63476354fc64fc049796c8aba"
+    },
+    "send-admin-code": {
+      "hasChanged": false,
+      "hash": "d49eaa757b76198021a197d43d68b168881ee947abb0a8248101c67c22513f32"
+    },
+    "verify-admin-code": {
+      "hasChanged": false,
+      "hash": "e7f6d412c5c5060f0ce6eda40b4a9626aeeb3d217ce8eeb22e55e847054b5164"
     }
   }
 }
