@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { User, CartItem, UserRole, Notification, Order } from '@/types';
-import { demoUser, demoNotifications, demoOrders, driverOrders, merchantOrders } from '@/data';
+import { demoNotifications, demoOrders, driverOrders, merchantOrders } from '@/data';
+import { supabase } from '@/lib/supabase';
 
 export type AppPage =
   | 'home' | 'errand' | 'products' | 'restaurants' | 'parcel'
@@ -28,6 +29,7 @@ interface AppState {
   selectedOrderId: string | null;
   selectedDriverOrderId: string | null;
   login: (role: UserRole, name?: string) => void;
+  loginWithSession: (user: User, role: UserRole) => void;
   logout: () => void;
   setPage: (page: AppPage) => void;
   isAdminVerified: boolean;
@@ -44,6 +46,13 @@ interface AppState {
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
+const roleHomePages: Record<UserRole, AppPage> = {
+  client: 'home',
+  driver: 'driver-home',
+  merchant: 'merchant-home',
+  admin: 'admin-home',
+};
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [page, setPage] = useState<AppPage>('home');
@@ -54,30 +63,71 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedDriverOrderId, setSelectedDriverOrderId] = useState<string | null>(null);
   const [isAdminVerified, setAdminVerified] = useState(false);
 
+  // Restore session on mount
+  useEffect(() => {
+    const restoreSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const authUser = session.user;
+        const meta = authUser.user_metadata || {};
+        const role = (meta.role as UserRole) || 'client';
+        const restoredUser: User = {
+          id: authUser.id,
+          name: meta.name || meta.full_name || authUser.email?.split('@')[0] || 'Utilisateur',
+          phone: meta.phone || authUser.phone || '',
+          email: authUser.email || '',
+          role,
+          commune: meta.commune || 'Cocody',
+          avatarUrl: meta.avatarUrl || 'https://images.pexels.com/photos/5384445/pexels-photo-5384445.jpeg?auto=compress&cs=tinysrgb&h=120&w=120',
+        };
+        setUser(restoredUser);
+        setPage(roleHomePages[role]);
+        if (role === 'driver') setOrders(driverOrders);
+        if (role === 'merchant') setOrders(merchantOrders);
+      }
+    };
+    restoreSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        setUser(null);
+        setAdminVerified(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const login = (role: UserRole, name?: string) => {
-    const newUser: User = {
-      ...demoUser,
+    // Demo fallback login (no real auth) — used only for demo mode
+    const demoUserObj: User = {
+      id: 'demo-' + role,
+      name: name || 'Awa Koné',
+      phone: '+225 07 01 23 45 67',
+      email: 'demo@example.ci',
       role,
-      name: name || demoUser.name,
+      commune: 'Cocody',
       avatarUrl: role === 'driver'
         ? 'https://images.pexels.com/photos/37059837/pexels-photo-37059837.jpeg?auto=compress&cs=tinysrgb&h=120&w=120'
         : role === 'merchant'
         ? 'https://images.pexels.com/photos/32459865/pexels-photo-32459865.jpeg?auto=compress&cs=tinysrgb&h=120&w=120'
-        : demoUser.avatarUrl,
+        : 'https://images.pexels.com/photos/5384445/pexels-photo-5384445.jpeg?auto=compress&cs=tinysrgb&h=120&w=120',
     };
-    setUser(newUser);
-    const homePages: Record<UserRole, AppPage> = {
-      client: 'home',
-      driver: 'driver-home',
-      merchant: 'merchant-home',
-      admin: 'admin-home',
-    };
-    setPage(homePages[role]);
+    setUser(demoUserObj);
+    setPage(roleHomePages[role]);
     if (role === 'driver') setOrders(driverOrders);
     if (role === 'merchant') setOrders(merchantOrders);
   };
 
-  const logout = () => {
+  const loginWithSession = (sessionUser: User, role: UserRole) => {
+    setUser(sessionUser);
+    setPage(roleHomePages[role]);
+    if (role === 'driver') setOrders(driverOrders);
+    if (role === 'merchant') setOrders(merchantOrders);
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     setPage('home');
     setCart([]);
@@ -135,6 +185,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         selectedOrderId,
         selectedDriverOrderId,
         login,
+        loginWithSession,
         logout,
         setPage,
         setSelectedOrderId,

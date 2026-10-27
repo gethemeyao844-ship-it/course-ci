@@ -113,9 +113,17 @@ export function MerchantSetupPage() {
     setSubmitting(true);
     setError('');
     try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
+        setError('Vous devez être connecté pour créer une boutique.');
+        setSubmitting(false);
+        return;
+      }
+
       const { data, error: insertErr } = await supabase
         .from('shops')
         .insert({
+          owner_id: authUser.id,
           shop_name: form.shopName,
           business_type: form.businessType,
           description: form.description || null,

@@ -98,9 +98,13 @@ export function DriverApplicationPage() {
 
   const checkExistingApplication = async () => {
     try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+
       const { data } = await supabase
         .from('driver_applications')
         .select('id, application_status, application_number')
+        .eq('applicant_id', authUser.id)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -169,10 +173,18 @@ export function DriverApplicationPage() {
     setError('');
 
     try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
+        setError('Vous devez être connecté pour soumettre une candidature.');
+        setSubmitting(false);
+        return;
+      }
+
       const appNumber = `CAND-${Date.now().toString().slice(-6)}`;
       const { data, error: insertErr } = await supabase
         .from('driver_applications')
         .insert({
+          applicant_id: authUser.id,
           full_name: form.fullName,
           phone: form.phone,
           email: form.email || null,
