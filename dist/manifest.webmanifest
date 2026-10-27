@@ -1,0 +1,40 @@
+{
+  "name": "Course CI — Livraison & Marketplace",
+  "short_name": "CourseCI",
+  "description": "Courses au marché, produits, restaurants, colis et services locaux à Abidjan et ses environs.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#082b52",
+  "theme_color": "#082b52",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["shopping", "food", "business"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
