@@ -1,5 +1,15 @@
 export type UserRole = 'client' | 'driver' | 'merchant' | 'admin';
 
+export interface User {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  role: UserRole;
+  commune: string;
+  avatarUrl: string;
+}
+
 export type OrderStatus =
   | 'received'
   | 'awaiting_driver'

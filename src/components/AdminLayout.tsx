@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  LayoutDashboard, Package, Tags, Store, Bike, Megaphone,
+  LayoutDashboard, Package, Tags, Store, Bike, Megaphone, Wallet,
   MapPin, AlertCircle, Users, LogOut, Menu, X, Bell,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -16,6 +16,9 @@ const navItems: { page: AppPage; label: string; icon: typeof LayoutDashboard }[]
   { page: 'admin-zones', label: 'Zones & tarifs', icon: MapPin },
   { page: 'admin-claims', label: 'Réclamations', icon: AlertCircle },
   { page: 'admin-accounts', label: 'Comptes & rôles', icon: Users },
+  { page: 'admin-shops', label: 'Boutiques', icon: Store },
+  { page: 'admin-driver-apps', label: 'Candidatures livreurs', icon: Bike },
+  { page: 'admin-payments', label: 'Paiements', icon: Wallet },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
