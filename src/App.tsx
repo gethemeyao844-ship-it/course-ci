@@ -9,6 +9,8 @@ import { ParcelPage } from '@/pages/ParcelPage';
 import { MarketplacePage } from '@/pages/MarketplacePage';
 import { SupplyListsPage } from '@/pages/SupplyListsPage';
 import { PromotionsPage } from '@/pages/PromotionsPage';
+import { CheckoutPage } from '@/pages/CheckoutPage';
+import { PaymentHistoryPage } from '@/pages/PaymentHistoryPage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { ProfilePage } from '@/pages/ProfilePage';

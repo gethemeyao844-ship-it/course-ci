@@ -4,6 +4,18 @@
     "admin-assign-role": {
       "hasChanged": false,
       "hash": "75e2baca687ca1a7dd5136afc71048a2b9f77784934b5d76c4cd3654b1bb691b"
+    },
+    "admin-login": {
+      "hasChanged": false,
+      "hash": "dcfd5e2185e3ac48db4a7f01ec97f9773afd21c59e57fec35c25a2ff211f1e50"
+    },
+    "create-payment": {
+      "hasChanged": false,
+      "hash": "82c5f85e8ba8f21e455ca46865e7518ae4f22dfa5507dd138c90b1a5ea3d7fcb"
+    },
+    "payment-webhook": {
+      "hasChanged": false,
+      "hash": "36c0ac3861fc0b2d1ed0cd5fe17c8a49a487d7c63476354fc64fc049796c8aba"
     }
   }
 }

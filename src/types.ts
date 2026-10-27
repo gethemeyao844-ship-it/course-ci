@@ -178,3 +178,105 @@ export interface ProductCategory {
   icon: string;
   subcategories: string[];
 }
+
+// ─── Payment types ──────────────────────────────────────────────────────
+
+export type PaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed' | 'cancelled' | 'refunded';
+
+export type PaymentPurpose = 'order' | 'subscription' | 'delivery_fee' | 'promotion';
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  provider: string;
+  channel: string | null;
+  logoUrl: string | null;
+  displayOrder: number;
+  isEnabled: boolean;
+  supportsSubscription: boolean;
+  supportsOrder: boolean;
+}
+
+export interface Transaction {
+  id: string;
+  reference: string;
+  paymentMethodId: string | null;
+  purpose: PaymentPurpose;
+  purposeId: string | null;
+  amountFcfa: number;
+  status: PaymentStatus;
+  providerReference: string | null;
+  failureReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  planType: 'daily' | 'monthly';
+  priceFcfa: number;
+  durationHours: number;
+  includesDelivery: boolean;
+  description: string | null;
+  isActive: boolean;
+}
+
+export interface MerchantSubscription {
+  id: string;
+  shopId: string;
+  planId: string;
+  merchantId: string;
+  paymentStatus: PaymentStatus;
+  amountFcfa: number;
+  activatedAt: string | null;
+  expiresAt: string | null;
+  paymentReference: string | null;
+  createdAt: string;
+}
+
+export interface Shop {
+  id: string;
+  ownerId: string;
+  shopName: string;
+  businessType: string;
+  description: string | null;
+  address: string;
+  commune: string;
+  logoUrl: string | null;
+  coverUrl: string | null;
+  galleryUrls: string[];
+  openingHours: string | null;
+  whatsappNumber: string | null;
+  contactPhone: string;
+  isApproved: boolean;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export type DriverApplicationStatus =
+  | 'draft' | 'submitted' | 'under_review' | 'info_requested' | 'accepted' | 'rejected';
+
+export interface DriverApplication {
+  id: string;
+  applicantId: string;
+  fullName: string;
+  phone: string;
+  email: string | null;
+  commune: string;
+  workZone: string | null;
+  vehicleType: 'moto' | 'velo' | 'voiture' | 'autre';
+  availabilityHours: string | null;
+  experience: string | null;
+  profilePhotoUrl: string | null;
+  idDocumentType: string | null;
+  idDocumentNumber: string | null;
+  documentUrls: string[];
+  licenseUrl: string | null;
+  messageToAdmin: string | null;
+  applicationStatus: DriverApplicationStatus;
+  adminResponse: string | null;
+  applicationNumber: string | null;
+  isActivated: boolean;
+  createdAt: string;
+}

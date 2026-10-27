@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Mail, Phone, Lock, User, MapPin, ArrowRight, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Phone, Lock, User, MapPin, ArrowRight, Check, Shield } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useApp } from '@/context';
 import { COMMUNES } from '@/data';
 import type { UserRole } from '@/types';
+import { supabase } from '@/lib/supabase';
 
 export function AuthPage() {
   const { login } = useApp();
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'admin'>('login');
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<UserRole>('client');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminError, setAdminError] = useState('');
 
   const [form, setForm] = useState({
     identifier: '',
@@ -21,6 +24,7 @@ export function AuthPage() {
     phone: '',
     email: '',
     commune: 'Cocody',
+    adminEmail: '',
   });
 
   const update = (key: string, value: string) => {
@@ -46,6 +50,14 @@ export function AuthPage() {
     return Object.keys(e).length === 0;
   };
 
+  const validateAdmin = () => {
+    const e: Record<string, string> = {};
+    if (!form.adminEmail.trim()) e.adminEmail = 'Entrez votre e-mail administrateur';
+    if (form.password.length < 11) e.password = 'Le mot de passe administrateur doit faire au moins 11 caractères';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
   const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault();
     if (mode === 'login' && validateLogin()) {
@@ -54,6 +66,47 @@ export function AuthPage() {
       login(role, form.name);
     } else if (mode === 'forgot') {
       setResetSent(true);
+    } else if (mode === 'admin' && validateAdmin()) {
+      handleAdminLogin();
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    setAdminLoading(true);
+    setAdminError('');
+    try {
+      const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-login`;
+      const response = await fetch(functionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          email: form.adminEmail,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setAdminError(data.error || 'Connexion administrateur refusée');
+        setSubmitted(true);
+        return;
+      }
+
+      if (data.success) {
+        login('admin', undefined);
+      } else {
+        setAdminError('Connexion administrateur refusée');
+        setSubmitted(true);
+      }
+    } catch {
+      setAdminError('Erreur de connexion au serveur. Réessayez.');
+      setSubmitted(true);
+    } finally {
+      setAdminLoading(false);
     }
   };
 
@@ -61,7 +114,6 @@ export function AuthPage() {
     { value: 'client', label: 'Client' },
     { value: 'driver', label: 'Livreur' },
     { value: 'merchant', label: 'Commerçant' },
-    { value: 'admin', label: 'Admin' },
   ];
 
   return (
@@ -138,6 +190,82 @@ export function AuthPage() {
                 Retour à la connexion
               </button>
             </div>
+          ) : mode === 'admin' ? (
+            <div className="animate-slide-up">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-navy-800 flex items-center justify-center">
+                  <Shield className="text-orange-400" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-navy-900">Accès administration</h2>
+                  <p className="text-gray-500 text-sm">Réservé aux administrateurs autorisés</p>
+                </div>
+              </div>
+
+              {adminError && (
+                <div className="bg-error-50 border border-error-100 rounded-xl p-4 mb-6">
+                  <p className="text-error-700 text-sm font-medium">{adminError}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="label-text">E-mail administrateur</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                      className="input-field pl-10"
+                      placeholder="admin@course.ci"
+                      value={form.adminEmail}
+                      onChange={(e) => update('adminEmail', e.target.value)}
+                    />
+                  </div>
+                  {errors.adminEmail && <p className="text-error-500 text-sm mt-1">{errors.adminEmail}</p>}
+                </div>
+
+                <div>
+                  <label className="label-text">Mot de passe (11 caractères minimum)</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="input-field pl-10 pr-10"
+                      placeholder="•••••••••••"
+                      value={form.password}
+                      onChange={(e) => update('password', e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy-700"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-error-500 text-sm mt-1">{errors.password}</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={adminLoading}
+                  className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60"
+                >
+                  {adminLoading ? 'Vérification...' : 'Accéder au tableau de bord'}
+                  {!adminLoading && <ArrowRight size={18} />}
+                </button>
+
+                {submitted && !adminError && (
+                  <p className="text-error-500 text-sm text-center">Veuillez corriger les erreurs ci-dessus.</p>
+                )}
+              </form>
+
+              <button
+                onClick={() => { setMode('login'); setErrors({}); setAdminError(''); }}
+                className="text-sm text-gray-500 hover:text-navy-700 font-medium mt-6 block w-full text-center"
+              >
+                Retour à la connexion
+              </button>
+            </div>
           ) : (
             <div className="animate-slide-up">
               <h2 className="text-2xl font-bold text-navy-900 mb-1">
@@ -147,8 +275,8 @@ export function AuthPage() {
                 {mode === 'login' ? 'Connectez-vous pour accéder à votre espace' : 'Rejoignez CourseCI en quelques secondes'}
               </p>
 
-              {/* Role selector */}
-              <div className="grid grid-cols-4 gap-2 mb-6">
+              {/* Role selector — Admin removed from public options */}
+              <div className="grid grid-cols-3 gap-2 mb-6">
                 {roles.map((r) => (
                   <button
                     key={r.value}
@@ -303,6 +431,19 @@ export function AuthPage() {
                   Démo: choisissez un rôle puis connectez-vous. Les réseaux sociaux seront disponibles une fois configurés.
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* Discrete admin access link — bottom corner */}
+          {mode !== 'admin' && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => { setMode('admin'); setErrors({}); setAdminError(''); setSubmitted(false); }}
+                className="text-xs text-gray-300 hover:text-gray-400 font-medium transition-colors flex items-center gap-1.5"
+              >
+                <Shield size={12} />
+                Accès administration
+              </button>
             </div>
           )}
         </div>

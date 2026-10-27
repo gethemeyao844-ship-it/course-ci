@@ -1,2 +1,11 @@
 [functions.admin-assign-role]
 verify_jwt = true
+
+[functions.admin-login]
+verify_jwt = false
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.payment-webhook]
+verify_jwt = false
