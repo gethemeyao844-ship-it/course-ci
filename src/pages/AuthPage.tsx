@@ -3,7 +3,7 @@ import { Eye, EyeOff, Mail, Phone, Lock, User, MapPin, ArrowRight, Check, Shield
 import { Logo } from '@/components/Logo';
 import { useApp } from '@/context';
 import { COMMUNES } from '@/data';
-import type { UserRole, User } from '@/types';
+import type { UserRole, User as AppUser } from '@/types';
 import { supabase } from '@/lib/supabase';
 
 export function AuthPage() {
@@ -98,7 +98,7 @@ export function AuthPage() {
       if (data.user) {
         const meta = data.user.user_metadata || {};
         const userRole = (meta.role as UserRole) || 'client';
-        const sessionUser: User = {
+        const sessionUser: AppUser = {
           id: data.user.id,
           name: meta.name || data.user.email?.split('@')[0] || 'Utilisateur',
           phone: meta.phone || '',
@@ -146,7 +146,7 @@ export function AuthPage() {
       }
 
       if (data.user) {
-        const sessionUser: User = {
+        const sessionUser: AppUser = {
           id: data.user.id,
           name: form.name,
           phone: form.phone,
